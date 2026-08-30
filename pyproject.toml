@@ -1,0 +1,32 @@
+[project]
+name = "paraguay-open-data-pipeline"
+version = "1.0.0"
+description = "Integration and data-quality pipeline for Paraguayan public data"
+requires-python = ">=3.11"
+dependencies = [
+    "requests>=2.31",
+    "PyYAML>=6.0",
+    "duckdb>=1.0",
+    "Jinja2>=3.1",
+    "certifi>=2024.7.4",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+paraguay-pipeline = "pypy_pipeline.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+# Docstrings in `text.py` and `parse.py` carry worked examples of the folding
+# and number rules. Running them as tests keeps the documentation honest.
+addopts = "--doctest-modules --doctest-glob='' -q"

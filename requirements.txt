@@ -1,0 +1,11 @@
+# Pinned to the minimum versions the pipeline was developed and tested against.
+requests>=2.31
+PyYAML>=6.0
+duckdb>=1.0
+Jinja2>=3.1
+# datos.gov.py serves a current Let's Encrypt chain that older CA bundles
+# reject with CERTIFICATE_VERIFY_FAILED. Any 2024.7+ bundle carries it.
+certifi>=2024.7.4
+
+# Testing
+pytest>=8.0

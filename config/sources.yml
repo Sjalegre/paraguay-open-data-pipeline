@@ -1,0 +1,133 @@
+# Declarative source registry.
+#
+# Nothing in the pipeline hard-codes a download URL. National sources are
+# resolved at run time through the datos.gov.py DKAN API by dataset name plus a
+# resource-name pattern, so a URL change upstream does not silently break the
+# run -- it surfaces as a resolution failure with a named dataset.
+
+worldbank:
+  base_url: https://api.worldbank.org/v2
+  country: PRY
+  # Indicators were probed for Paraguay on 2026-08-30. `expect_complete_from`
+  # is the first year the series is known to be gap-free; the freshness and
+  # completeness checks are driven off it rather than off an assumption that
+  # every World Bank series is dense. See docs/source-audit.md.
+  indicators:
+    - code: NY.GDP.MKTP.KD.ZG
+      name: GDP growth
+      unit: annual %
+      expect_complete_from: 1990
+    - code: NY.GDP.PCAP.KD
+      name: GDP per capita
+      unit: constant 2015 US$
+      expect_complete_from: 1990
+    - code: FP.CPI.TOTL.ZG
+      name: Inflation, consumer prices
+      unit: annual %
+      expect_complete_from: 1990
+    - code: SL.UEM.TOTL.ZS
+      name: Unemployment
+      unit: '% of labour force'
+      expect_complete_from: 1991
+    - code: SL.TLF.CACT.ZS
+      name: Labour force participation
+      unit: '% of population 15+'
+      expect_complete_from: 1990
+    - code: NE.EXP.GNFS.ZS
+      name: Exports of goods and services
+      unit: '% of GDP'
+      expect_complete_from: 1990
+    - code: NE.TRD.GNFS.ZS
+      name: Trade
+      unit: '% of GDP'
+      expect_complete_from: 1990
+    - code: NV.AGR.TOTL.ZS
+      name: Agriculture, forestry and fishing value added
+      unit: '% of GDP'
+      expect_complete_from: 1990
+    - code: BX.KLT.DINV.WD.GD.ZS
+      name: Foreign direct investment, net inflows
+      unit: '% of GDP'
+      expect_complete_from: 1990
+    - code: SP.POP.TOTL
+      name: Population, total
+      unit: persons
+      expect_complete_from: 1990
+    # Deliberately kept despite being sparse. A warehouse that silently drops
+    # its incomplete series hides exactly the problem this project is about.
+    - code: SI.POV.GINI
+      name: Gini index
+      unit: index
+      expect_complete_from: null
+    - code: GC.TAX.TOTL.GD.ZS
+      name: Tax revenue
+      unit: '% of GDP'
+      expect_complete_from: 2005
+    # Listed by the World Bank for Paraguay and null for every year of it.
+    # Kept so the pipeline exercises, and the report states, that even the
+    # well-behaved API source has indicators with no data behind them.
+    - code: GC.DOD.TOTL.GD.ZS
+      name: Central government debt, total
+      unit: '% of GDP'
+      expect_complete_from: null
+
+datos_gov_py:
+  api_base: https://www.datos.gov.py/api/3/action
+
+  geography_2012:
+    dataset: "c\xF3digos-geogr\xE1ficos-censo-nacional-de-poblaci\xF3n-y-viviendas-2012-paraguay"
+    # Served as text/csv with no charset parameter; the bytes are cp1252.
+    encoding: cp1252
+    delimiter: ';'
+    # Patterns are matched against the resource name and its URL. They must be
+    # specific enough to pick exactly one: this dataset publishes each table
+    # twice, once as CSV on datos.gov.py and once as JSON on ine.gov.py, under
+    # near-identical names.
+    resources:
+      departments: 'Departamentos_Paraguay_Codigos_DGEEC[^/]*\.csv$'
+      districts: 'Distritos_Paraguay_Codigos_DGEEC[^/]*\.csv$'
+
+  geography_2022:
+    dataset: base-de-datos-geojson-geoespacial-de-departamentos-distritos-ciudades-y-barrios-de-todo-el
+    encoding: utf-8
+    resources:
+      districts: 'DISTRITOS_PY_CNPV2022\.geojson$'
+    # 46 MB of geometry for 5 attribute fields. Only the properties are read.
+    geometry: discard
+
+  census_population_2022:
+    dataset: "resultados-finales-del-censo-nacional-de-poblaci\xF3n-y-viviendas-2022"
+    encoding: utf-8
+    delimiter: ';'
+    year: 2022
+    # One file per department, 1.2 .. 1.18. Cuadro 1.1 is Asuncion broken down
+    # by barrio, not by district, so it is excluded: Asuncion is a single
+    # district (key 0000) and its total comes from the national table.
+    resource_pattern: '^Cuadro 1\.(?:[2-9]|1[0-8])\. Departamento '
+    national_resource_pattern: '^Cuadro 1\. Paraguay\. Poblaci\S+n total por sexo'
+    # Required, not cosmetic: every one of these tables is published twice under
+    # a byte-identical resource name, once as CSV and once as JSON.
+    format: csv
+
+  nbi_2022:
+    dataset: "necesidades-b\xE1sicas-insatisfechas-nbi-paraguay-2022"
+    encoding: utf-8
+    delimiter: ';'
+    year: 2022
+    resource_pattern: '^Cuadro N'
+    format: csv
+
+# Sources verified as unusable on 2026-08-30. They are listed rather than
+# deleted so the audit trail stays in the repository.
+known_unavailable:
+  - source: Banco Central del Paraguay (bcp.gov.py)
+    status: HTTP 403
+    note: >-
+      Blocks automated access. The national catalogue nonetheless publishes
+      "tipo-de-cambio-mensual-de-monedas" pointing at this host, so that dataset
+      is listed but structurally unreachable.
+  - source: DNIT open data portal
+    status: no machine-readable resources
+    note: >-
+      Liferay portal rendered client-side; the served HTML contains no links to
+      data files. DNIT also contributes zero datasets to datos.gov.py.
