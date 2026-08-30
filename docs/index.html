@@ -1,0 +1,1010 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Data quality report - Paraguay open data warehouse</title>
+<style>
+  :root {
+    --bg: #ffffff; --fg: #16191d; --muted: #5c6672; --line: #e3e7ec;
+    --pass: #17795e; --pass-bg: #e6f4ef;
+    --warn: #8a5a00; --warn-bg: #fdf3e0;
+    --fail: #b02a1f; --fail-bg: #fdecea;
+    --accent: #1f4e79;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #14171a; --fg: #e8ecf1; --muted: #9aa5b1; --line: #2a2f36;
+      --pass: #4cc79f; --pass-bg: #16302a;
+      --warn: #e0a33c; --warn-bg: #33280f;
+      --fail: #f1786c; --fail-bg: #3a1d1a;
+      --accent: #7fb2e5;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 2rem 1.25rem 4rem; background: var(--bg); color: var(--fg);
+    font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; }
+  h1 { font-size: 1.6rem; margin: 0 0 .25rem; letter-spacing: -.01em; }
+  h2 { font-size: 1.05rem; margin: 2.5rem 0 .75rem; letter-spacing: -.005em; }
+  .sub { color: var(--muted); margin: 0 0 2rem; font-size: .9rem; }
+  .cards { display: grid; gap: .75rem;
+           grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+  .card { border: 1px solid var(--line); border-radius: 8px; padding: .9rem 1rem; }
+  .card .n { font-size: 1.7rem; font-weight: 650; line-height: 1.1; }
+  .card .l { color: var(--muted); font-size: .78rem; text-transform: uppercase;
+             letter-spacing: .04em; margin-top: .2rem; }
+  .card.ok .n { color: var(--pass); }
+  .card.warn .n { color: var(--warn); }
+  .card.bad .n { color: var(--fail); }
+  .scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; }
+  table { border-collapse: collapse; width: 100%; font-size: .87rem; }
+  th, td { text-align: left; padding: .55rem .7rem; border-bottom: 1px solid var(--line);
+           vertical-align: top; }
+  th { font-weight: 600; color: var(--muted); font-size: .74rem;
+       text-transform: uppercase; letter-spacing: .04em; white-space: nowrap; }
+  tbody tr:last-child td { border-bottom: none; }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+         font-size: .93em; }
+  .pill { display: inline-block; padding: .1rem .45rem; border-radius: 4px;
+          font-size: .74rem; font-weight: 650; letter-spacing: .02em; }
+  .pill.pass { color: var(--pass); background: var(--pass-bg); }
+  .pill.fail-error { color: var(--fail); background: var(--fail-bg); }
+  .pill.fail-warning { color: var(--warn); background: var(--warn-bg); }
+  .pill.fail-info { color: var(--muted); background: var(--line); }
+  .note { border-left: 3px solid var(--accent); padding: .6rem 0 .6rem .9rem;
+          color: var(--muted); margin: 1rem 0; font-size: .9rem; }
+  .muted { color: var(--muted); }
+  footer { margin-top: 3rem; color: var(--muted); font-size: .8rem;
+           border-top: 1px solid var(--line); padding-top: 1rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Data quality report</h1>
+  <p class="sub">
+    Paraguay open data warehouse &middot; run <code>78618db3dbe2</code> &middot;
+    generated 2026-08-30 22:41 UTC
+  </p>
+
+  <div class="cards">
+    <div class="card"><div class="n">30</div><div class="l">Checks run</div></div>
+    <div class="card ok"><div class="n">26</div><div class="l">Passed</div></div>
+    <div class="card bad">
+      <div class="n">4</div><div class="l">Failed</div></div>
+    <div class="card ok">
+      <div class="n">0</div><div class="l">Blocking</div></div>
+    <div class="card"><div class="n">2,630</div><div class="l">District facts</div></div>
+    <div class="card"><div class="n">407</div><div class="l">National facts</div></div>
+  </div>
+
+  <div class="note">
+    Checks that fail at <strong>warning</strong> severity are defects present in
+    the published sources. They are recorded rather than repaired so the state of
+    the source data stays visible; only <strong>error</strong> severity blocks a run.
+  </div>
+
+  <h2>Checks by family</h2>
+  <div class="scroll">
+  <table>
+    <thead><tr><th>Family</th><th>Run</th><th>Failed</th></tr></thead>
+    <tbody>
+    
+      <tr><td>completeness</td><td>11</td>
+          <td><span class="pill fail-error">2</span>
+              </td></tr>
+    
+      <tr><td>conformity</td><td>5</td>
+          <td><span class="pill fail-error">2</span>
+              </td></tr>
+    
+      <tr><td>consistency</td><td>1</td>
+          <td><span class="pill pass">0</span></td></tr>
+    
+      <tr><td>freshness</td><td>2</td>
+          <td><span class="pill pass">0</span></td></tr>
+    
+      <tr><td>range</td><td>5</td>
+          <td><span class="pill pass">0</span></td></tr>
+    
+      <tr><td>referential</td><td>3</td>
+          <td><span class="pill pass">0</span></td></tr>
+    
+      <tr><td>uniqueness</td><td>3</td>
+          <td><span class="pill pass">0</span></td></tr>
+    
+    </tbody>
+  </table>
+  </div>
+
+  <h2>All checks</h2>
+  <div class="scroll">
+  <table>
+    <thead>
+      <tr><th>Status</th><th>Check</th><th>Target</th><th>Expected</th>
+          <th>Observed</th><th>Rows</th></tr>
+    </thead>
+    <tbody>
+    
+      <tr>
+        <td><span class="pill pass">pass</span>
+            </td>
+        <td><code>district.geography_fk</code>
+            </td>
+        <td><code>fact_indicator_district</code>
+            <div class="muted"><code>geo_key</code></div></td>
+        <td>every geo_key present in dim_geography</td>
+        <td>0 orphan rows</td>
+        <td>0</td>
+      </tr>
+    
+      <tr>
+        <td><span class="pill pass">pass</span>
+            </td>
+        <td><code>district.grain_unique</code>
+            </td>
+        <td><code>fact_indicator_district</code>
+            <div class="muted"><code>geo_key, indicator_code, year</code></div></td>
+        <td>0 duplicate keys</td>
+        <td>0 duplicate keys</td>
+        <td>0</td>
+      </tr>
+    
+      <tr>
+        <td><span class="pill pass">pass</span>
+            </td>
+        <td><code>district.indicator_fk</code>
+            </td>
+        <td><code>fact_indicator_district</code>
+            <div class="muted"><code>indicator_code</code></div></td>
+        <td>every indicator_code present in dim_indicator</td>
+        <td>0 orphan rows</td>
+        <td>0</td>
+      </tr>
+    
+      <tr>
+        <td><span class="pill pass">pass</span>
+            </td>
+        <td><code>district.median_age_plausible</code>
+            <div class="muted">indicator_code = &#39;AGE_MEDIAN&#39;</div></td>
+        <td><code>fact_indicator_district</code>
+            <div class="muted"><code>value</code></div></td>
+        <td>all values in [10, 60]</td>
+        <td>0 of 263 outside</td>
+        <td>0</td>
+      </tr>
+    
+      <tr>
+        <td><span class="pill pass">pass</span>
+            </td>
+        <td><code>district.nbi_covers_country</code>
+            <div class="muted">indicator_code = &#39;NBI_ANY_PCT&#39;</div></td>
+        <td><code>fact_indicator_district</code>
+            <div class="muted"><code>geo_key</code></div></td>
+        <td>&gt;= 100% of dim_geography</td>
+        <td>100.0% (263/263)</td>
+        <td>0</td>
+      </tr>
+    
+      <tr>
+        <td><span class="pill pass">pass</span>
+            </td>
+        <td><code>district.percentages_in_bounds</code>
+            <div class="muted">indicator_code IN (&#39;NBI_ANY_PCT&#39;,&#39;NBI_HOUSING_PCT&#39;,&#39;NBI_SANITATION_PCT&#39;,&#39;NBI_EDUCATION_PCT&#39;,&#39;NBI_SUBSISTENCE_PCT&#39;)</div></td>
+        <td><code>fact_indicator_district</code>
+            <div class="muted"><code>value</code></div></td>
+        <td>all values in [0, 100]</td>
+        <td>0 of 1315 outside</td>
+        <td>0</td>
+      </tr>
+    
+      <tr>
+        <td><span class="pill pass">pass</span>
+            </td>
+        <td><code>district.population_covers_country</code>
+            <div class="muted">indicator_code = &#39;POP_TOTAL&#39;</div></td>
+        <td><code>fact_indicator_district</code>
+            <div class="muted"><code>geo_key</code></div></td>
+        <td>&gt;= 100% of dim_geography</td>
+        <td>100.0% (263/263)</td>
+        <td>0</td>
+      </tr>
+    
+      <tr>
+        <td><span class="pill pass">pass</span>
+            </td>
+        <td><code>district.population_positive</code>
+            <div class="muted">indicator_code = &#39;POP_TOTAL&#39;</div></td>
+        <td><code>fact_indicator_district</code>
+            <div class="muted"><code>value</code></div></td>
+        <td>all values in [1, 2000000]</td>
+        <td>0 of 263 outside</td>
+        <td>0</td>
+      </tr>
+    
+      <tr>
+        <td><span class="pill pass">pass</span>
+            </td>
+        <td><code>district.sexes_sum_to_total</code>
+            </td>
+        <td><code>fact_indicator_district</code></td>
+        <td>male + female = total for every district</td>
+        <td>0 of 263 districts do not reconcile</td>
+        <td>0</td>
+      </tr>
+    
+      <tr>
+        <td><span class="pill pass">pass</span>
+            </td>
+        <td><code>district.value_present</code>
+            </td>
+        <td><code>fact_indicator_district</code>
+            <div class="muted"><code>value</code></div></td>
+        <td>null ratio &lt;= 0.0%</td>
+        <td>0.0% (0/2630)</td>
+        <td>0</td>
+      </tr>
+    
+      <tr>
+        <td><span class="pill pass">pass</span>
+            </td>
+        <td><code>geo.crosswalk_coverage</code>
+            </td>
+        <td><code>dim_geography</code></td>
+        <td>250 districts crosswalk to 2012</td>
+        <td>250 of 263 districts reconcile to the 2012 register</td>
+        <td>0</td>
+      </tr>
+    
+      <tr>
+        <td><span class="pill pass">pass</span>
+            </td>
+        <td><code>geo.department_code_format</code>
+            </td>
+        <td><code>dim_geography</code>
+            <div class="muted"><code>department_code</code></div></td>
+        <td>matches /^\d{2}$/</td>
+        <td>0 of 263 do not match</td>
+        <td>0</td>
+      </tr>
+    
+      <tr>
+        <td><span class="pill pass">pass</span>
+            </td>
+        <td><code>geo.district_name_present</code>
+            </td>
+        <td><code>dim_geography</code>
+            <div class="muted"><code>district_name</code></div></td>
+        <td>null ratio &lt;= 0.0%</td>
+        <td>0.0% (0/263)</td>
+        <td>0</td>
+      </tr>
+    
+      <tr>
+        <td><span class="pill pass">pass</span>
+            </td>
+        <td><code>geo.key_format</code>
+            <div class="muted">canonical DDdd key, zero-padded</div></td>
+        <td><code>dim_geography</code>
+            <div class="muted"><code>geo_key</code></div></td>
+        <td>matches /^\d{4}$/</td>
+        <td>0 of 263 do not match</td>
+        <td>0</td>
+      </tr>
+    
+      <tr>
+        <td><span class="pill pass">pass</span>
+            </td>
+        <td><code>geo.key_unique</code>
+            </td>
+        <td><code>dim_geography</code>
+            <div class="muted"><code>geo_key</code></div></td>
+        <td>0 duplicate keys</td>
+        <td>0 duplicate keys</td>
+        <td>0</td>
+      </tr>
+    
+      <tr>
+        <td><span class="pill pass">pass</span>
+            </td>
+        <td><code>geo.row_count</code>
+            <div class="muted">districts defined by CNPV 2022</div></td>
+        <td><code>dim_geography</code></td>
+        <td>= 263</td>
+        <td>263</td>
+        <td>0</td>
+      </tr>
+    
+      <tr>
+        <td><span class="pill pass">pass</span>
+            </td>
+        <td><code>national.grain_unique</code>
+            </td>
+        <td><code>fact_indicator_national</code>
+            <div class="muted"><code>indicator_code, year</code></div></td>
+        <td>0 duplicate keys</td>
+        <td>0 duplicate keys</td>
+        <td>0</td>
+      </tr>
+    
+      <tr>
+        <td><span class="pill pass">pass</span>
+            </td>
+        <td><code>national.indicator_fk</code>
+            </td>
+        <td><code>fact_indicator_national</code>
+            <div class="muted"><code>indicator_code</code></div></td>
+        <td>every indicator_code present in dim_indicator</td>
+        <td>0 orphan rows</td>
+        <td>0</td>
+      </tr>
+    
+      <tr>
+        <td><span class="pill pass">pass</span>
+            </td>
+        <td><code>national.unemployment_is_a_percentage</code>
+            <div class="muted">indicator_code = &#39;SL.UEM.TOTL.ZS&#39;</div></td>
+        <td><code>fact_indicator_national</code>
+            <div class="muted"><code>value</code></div></td>
+        <td>all values in [0, 100]</td>
+        <td>0 of 35 outside</td>
+        <td>0</td>
+      </tr>
+    
+      <tr>
+        <td><span class="pill pass">pass</span>
+            </td>
+        <td><code>national.value_present</code>
+            </td>
+        <td><code>fact_indicator_national</code>
+            <div class="muted"><code>value</code></div></td>
+        <td>null ratio &lt;= 0.0%</td>
+        <td>0.0% (0/407)</td>
+        <td>0</td>
+      </tr>
+    
+      <tr>
+        <td><span class="pill pass">pass</span>
+            </td>
+        <td><code>national.year_plausible</code>
+            </td>
+        <td><code>fact_indicator_national</code>
+            <div class="muted"><code>year</code></div></td>
+        <td>all values in [1990, 2027]</td>
+        <td>0 of 407 outside</td>
+        <td>0</td>
+      </tr>
+    
+      <tr>
+        <td><span class="pill pass">pass</span>
+            </td>
+        <td><code>source.all_retrievals_ok</code>
+            </td>
+        <td><code>dim_source</code></td>
+        <td>every source returned HTTP 200</td>
+        <td>0 non-200 retrievals</td>
+        <td>0</td>
+      </tr>
+    
+      <tr>
+        <td><span class="pill pass">pass</span>
+            </td>
+        <td><code>district.freshness</code>
+            </td>
+        <td><code>fact_indicator_district</code>
+            <div class="muted"><code>year</code></div></td>
+        <td>at most 12 years behind 2026</td>
+        <td>latest = 2022 (4 years behind)</td>
+        <td>0</td>
+      </tr>
+    
+      <tr>
+        <td><span class="pill pass">pass</span>
+            </td>
+        <td><code>national.freshness</code>
+            </td>
+        <td><code>fact_indicator_national</code>
+            <div class="muted"><code>year</code></div></td>
+        <td>at most 2 years behind 2026</td>
+        <td>latest = 2025 (1 years behind)</td>
+        <td>0</td>
+      </tr>
+    
+      <tr>
+        <td><span class="pill pass">pass</span>
+            </td>
+        <td><code>national.series_gaps</code>
+            </td>
+        <td><code>fact_indicator_national</code></td>
+        <td>no interior gaps in series declared complete</td>
+        <td>0 missing years across 11 series</td>
+        <td>0</td>
+      </tr>
+    
+      <tr>
+        <td><span class="pill pass">pass</span>
+            </td>
+        <td><code>source.declared_format_matches_served</code>
+            </td>
+        <td><code>dim_source</code>
+            <div class="muted"><code>declared_format</code></div></td>
+        <td>declared format matches served content type</td>
+        <td>0 resources served as something other than their declared format</td>
+        <td>0</td>
+      </tr>
+    
+      <tr>
+        <td><span class="pill fail-info">info</span></td>
+        <td><code>geo.published_2012_key_unpadded</code>
+            <div class="muted">a direct join on the published keys matches nothing</div></td>
+        <td><code>dim_geography</code>
+            <div class="muted"><code>vintage_2012_key</code></div></td>
+        <td>published 2012 keys already in DDdd form</td>
+        <td>160 of 250 published unpadded</td>
+        <td>160</td>
+      </tr>
+    
+      <tr>
+        <td><span class="pill fail-info">info</span></td>
+        <td><code>national.sparse_series</code>
+            </td>
+        <td><code>fact_indicator_national</code></td>
+        <td>every series dense between its first and last year</td>
+        <td>1 of 12 series have interior gaps, totalling 7 missing years</td>
+        <td>1</td>
+      </tr>
+    
+      <tr>
+        <td><span class="pill fail-warning">warning</span></td>
+        <td><code>geo.encoding_damage</code>
+            <div class="muted">known defect in the published GeoJSON, not introduced here</div></td>
+        <td><code>dim_geography</code>
+            <div class="muted"><code>district_name</code></div></td>
+        <td>0 names with encoding damage</td>
+        <td>3 district names arrived damaged</td>
+        <td>3</td>
+      </tr>
+    
+      <tr>
+        <td><span class="pill fail-warning">warning</span></td>
+        <td><code>national.indicators_with_no_data</code>
+            </td>
+        <td><code>dim_indicator</code>
+            <div class="muted"><code>indicator_code</code></div></td>
+        <td>every configured indicator has at least one observation</td>
+        <td>1 configured indicators returned no observations at all</td>
+        <td>1</td>
+      </tr>
+    
+    </tbody>
+  </table>
+  </div>
+
+  <h2>Source integration</h2>
+  <div class="scroll">
+  <table>
+    <thead><tr><th>Measure</th><th>Value</th><th>Meaning</th></tr></thead>
+    <tbody>
+      
+      <tr><td>Districts in the 2022 register</td><td><strong>263</strong></td>
+          <td class="muted">CNPV 2022 GeoJSON, the authoritative vintage for this warehouse</td></tr>
+      
+      <tr><td>Reconciled to the 2012 register</td><td><strong>250 of 263</strong></td>
+          <td class="muted">after zero-padding both keys to DDdd</td></tr>
+      
+      <tr><td>2012 keys published unpadded</td><td><strong>160 of 250</strong></td>
+          <td class="muted">a join on the keys as published matches these on nothing</td></tr>
+      
+      <tr><td>Districts created after 2012</td><td><strong>13</strong></td>
+          <td class="muted">a real change in the territory, not a join failure</td></tr>
+      
+      <tr><td>Districts renamed since 2012</td><td><strong>6</strong></td>
+          <td class="muted">same code, different official name across vintages</td></tr>
+      
+      <tr><td>Names carrying encoding damage</td><td><strong>3</strong></td>
+          <td class="muted">present in the published source before ingestion</td></tr>
+      
+      <tr><td>Name match rate: census_population</td><td><strong>100.0%</strong></td>
+          <td class="muted">district rows attached to the dimension by normalised name</td></tr>
+      
+      <tr><td>Name match rate: nbi</td><td><strong>100.0%</strong></td>
+          <td class="muted">district rows attached to the dimension by normalised name</td></tr>
+      
+      <tr><td>Unmatched district names</td><td><strong>0</strong></td>
+          <td class="muted">rows that could not be attached and were not loaded</td></tr>
+      
+    </tbody>
+  </table>
+  </div>
+
+  
+  <h2>National catalogue audit</h2>
+  <p class="sub">Measured live against the datos.gov.py DKAN API during this run.</p>
+  <div class="scroll">
+  <table>
+    <thead><tr><th>Measure</th><th>Value</th></tr></thead>
+    <tbody>
+      <tr><td>Datasets listed</td><td>434</td></tr>
+      <tr><td>Resources listed</td><td>3615</td></tr>
+      <tr><td>Datasets with no resource</td><td>5</td></tr>
+      <tr><td>Resources with no URL</td><td>8</td></tr>
+      <tr><td>Datasets with no declared publisher</td>
+          <td>229
+              (52.8%)</td></tr>
+      <tr><td>Distinct declared formats</td><td>25</td></tr>
+    </tbody>
+  </table>
+  </div>
+  
+
+  <h2>Sources retrieved</h2>
+  <div class="scroll">
+  <table>
+    <thead><tr><th>Source</th><th>Status</th><th>Declared</th><th>Served</th>
+               <th>Bytes</th><th>SHA-256</th></tr></thead>
+    <tbody>
+    
+      <tr>
+        <td><code>catalog:all</code></td>
+        <td>200</td>
+        <td>-</td>
+        <td>unknown
+            </td>
+        <td>578</td>
+        <td><code class="muted">c0d8b6e272f6</code></td>
+      </tr>
+    
+      <tr>
+        <td><code>catalog:all</code></td>
+        <td>200</td>
+        <td>-</td>
+        <td>unknown
+            </td>
+        <td>127,747</td>
+        <td><code class="muted">5ff9a38ddce1</code></td>
+      </tr>
+    
+      <tr>
+        <td><code>catalog:all</code></td>
+        <td>200</td>
+        <td>-</td>
+        <td>unknown
+            </td>
+        <td>561,667</td>
+        <td><code class="muted">762e71b17af0</code></td>
+      </tr>
+    
+      <tr>
+        <td><code>catalog:all</code></td>
+        <td>200</td>
+        <td>-</td>
+        <td>unknown
+            </td>
+        <td>1,482,131</td>
+        <td><code class="muted">e53eabdf46d8</code></td>
+      </tr>
+    
+      <tr>
+        <td><code>catalog:all</code></td>
+        <td>200</td>
+        <td>-</td>
+        <td>unknown
+            </td>
+        <td>1,158,392</td>
+        <td><code class="muted">498793ee99c0</code></td>
+      </tr>
+    
+      <tr>
+        <td><code>catalog:all</code></td>
+        <td>200</td>
+        <td>-</td>
+        <td>unknown
+            </td>
+        <td>957,407</td>
+        <td><code class="muted">8f223222e7a9</code></td>
+      </tr>
+    
+      <tr>
+        <td><code>catalog:base-de-datos-geojson-geoespacial-de-departamentos-distritos-ciudades-y-barrios-de-todo-el</code></td>
+        <td>200</td>
+        <td>-</td>
+        <td>unknown
+            </td>
+        <td>5,315</td>
+        <td><code class="muted">435824b4dac5</code></td>
+      </tr>
+    
+      <tr>
+        <td><code>catalog:códigos-geográficos-censo-nacional-de-población-y-viviendas-2012-paraguay</code></td>
+        <td>200</td>
+        <td>-</td>
+        <td>unknown
+            </td>
+        <td>7,405</td>
+        <td><code class="muted">85bb10aa9dda</code></td>
+      </tr>
+    
+      <tr>
+        <td><code>catalog:necesidades-básicas-insatisfechas-nbi-paraguay-2022</code></td>
+        <td>200</td>
+        <td>-</td>
+        <td>unknown
+            </td>
+        <td>3,533</td>
+        <td><code class="muted">dc9fb5db0d17</code></td>
+      </tr>
+    
+      <tr>
+        <td><code>catalog:resultados-finales-del-censo-nacional-de-población-y-viviendas-2022</code></td>
+        <td>200</td>
+        <td>-</td>
+        <td>unknown
+            </td>
+        <td>219,007</td>
+        <td><code class="muted">4c26c9e71877</code></td>
+      </tr>
+    
+      <tr>
+        <td><code>catalog:resultados-finales-del-censo-nacional-de-población-y-viviendas-2022</code></td>
+        <td>200</td>
+        <td>-</td>
+        <td>unknown
+            </td>
+        <td>219,007</td>
+        <td><code class="muted">4c26c9e71877</code></td>
+      </tr>
+    
+      <tr>
+        <td><code>census_population:Cuadro 1.10. Departamento Paraguarí. Pob</code></td>
+        <td>200</td>
+        <td>csv</td>
+        <td>unknown
+            </td>
+        <td>833</td>
+        <td><code class="muted">b644ddc68c04</code></td>
+      </tr>
+    
+      <tr>
+        <td><code>census_population:Cuadro 1.11. Departamento Alto Paraná. P</code></td>
+        <td>200</td>
+        <td>csv</td>
+        <td>unknown
+            </td>
+        <td>1,080</td>
+        <td><code class="muted">bb3d0e678083</code></td>
+      </tr>
+    
+      <tr>
+        <td><code>census_population:Cuadro 1.12. Departamento Central. Pobla</code></td>
+        <td>200</td>
+        <td>csv</td>
+        <td>unknown
+            </td>
+        <td>954</td>
+        <td><code class="muted">25892586a04a</code></td>
+      </tr>
+    
+      <tr>
+        <td><code>census_population:Cuadro 1.13. Departamento Ñeembucú. Pobl</code></td>
+        <td>200</td>
+        <td>csv</td>
+        <td>unknown
+            </td>
+        <td>770</td>
+        <td><code class="muted">62c8a7b377eb</code></td>
+      </tr>
+    
+      <tr>
+        <td><code>census_population:Cuadro 1.14. Departamento Amambay. Pobla</code></td>
+        <td>200</td>
+        <td>csv</td>
+        <td>unknown
+            </td>
+        <td>358</td>
+        <td><code class="muted">7a2690d7baf7</code></td>
+      </tr>
+    
+      <tr>
+        <td><code>census_population:Cuadro 1.15. Departamento Canindeyú. Pob</code></td>
+        <td>200</td>
+        <td>csv</td>
+        <td>unknown
+            </td>
+        <td>819</td>
+        <td><code class="muted">c00b5d649cbf</code></td>
+      </tr>
+    
+      <tr>
+        <td><code>census_population:Cuadro 1.16. Departamento Presidente Hay</code></td>
+        <td>200</td>
+        <td>csv</td>
+        <td>unknown
+            </td>
+        <td>579</td>
+        <td><code class="muted">e14651395202</code></td>
+      </tr>
+    
+      <tr>
+        <td><code>census_population:Cuadro 1.17. Departamento Boquerón. Pobl</code></td>
+        <td>200</td>
+        <td>csv</td>
+        <td>unknown
+            </td>
+        <td>284</td>
+        <td><code class="muted">c01a64d8a9a7</code></td>
+      </tr>
+    
+      <tr>
+        <td><code>census_population:Cuadro 1.18. Departamento Alto Paraguay.</code></td>
+        <td>200</td>
+        <td>csv</td>
+        <td>unknown
+            </td>
+        <td>273</td>
+        <td><code class="muted">07fa681fcad2</code></td>
+      </tr>
+    
+      <tr>
+        <td><code>census_population:Cuadro 1.2. Departamento Concepción. Pob</code></td>
+        <td>200</td>
+        <td>csv</td>
+        <td>unknown
+            </td>
+        <td>710</td>
+        <td><code class="muted">e5aafd367885</code></td>
+      </tr>
+    
+      <tr>
+        <td><code>census_population:Cuadro 1.3. Departamento San Pedro. Pobl</code></td>
+        <td>200</td>
+        <td>csv</td>
+        <td>unknown
+            </td>
+        <td>1,121</td>
+        <td><code class="muted">2b34fd8240ce</code></td>
+      </tr>
+    
+      <tr>
+        <td><code>census_population:Cuadro 1.4. Departamento Cordillera. Pob</code></td>
+        <td>200</td>
+        <td>csv</td>
+        <td>unknown
+            </td>
+        <td>974</td>
+        <td><code class="muted">efaaf0158579</code></td>
+      </tr>
+    
+      <tr>
+        <td><code>census_population:Cuadro 1.5. Departamento Guairá. Poblaci</code></td>
+        <td>200</td>
+        <td>csv</td>
+        <td>unknown
+            </td>
+        <td>877</td>
+        <td><code class="muted">b329ee675611</code></td>
+      </tr>
+    
+      <tr>
+        <td><code>census_population:Cuadro 1.6. Departamento Caaguazú. Pobla</code></td>
+        <td>200</td>
+        <td>csv</td>
+        <td>unknown
+            </td>
+        <td>1,130</td>
+        <td><code class="muted">dfbc7aa57049</code></td>
+      </tr>
+    
+      <tr>
+        <td><code>census_population:Cuadro 1.7. Departamento Caazapá. Poblac</code></td>
+        <td>200</td>
+        <td>csv</td>
+        <td>unknown
+            </td>
+        <td>575</td>
+        <td><code class="muted">9064ce05706b</code></td>
+      </tr>
+    
+      <tr>
+        <td><code>census_population:Cuadro 1.8. Departamento Itapúa. Poblaci</code></td>
+        <td>200</td>
+        <td>csv</td>
+        <td>unknown
+            </td>
+        <td>1,431</td>
+        <td><code class="muted">0d2c94f4de41</code></td>
+      </tr>
+    
+      <tr>
+        <td><code>census_population:Cuadro 1.9. Departamento Misiones. Pobla</code></td>
+        <td>200</td>
+        <td>csv</td>
+        <td>unknown
+            </td>
+        <td>535</td>
+        <td><code class="muted">8d98bf71367d</code></td>
+      </tr>
+    
+      <tr>
+        <td><code>census_population:national</code></td>
+        <td>200</td>
+        <td>csv</td>
+        <td>unknown
+            </td>
+        <td>931</td>
+        <td><code class="muted">e8210a4036c9</code></td>
+      </tr>
+    
+      <tr>
+        <td><code>geography_2012:districts</code></td>
+        <td>200</td>
+        <td>csv</td>
+        <td>unknown
+            </td>
+        <td>8,374</td>
+        <td><code class="muted">1b2a03a6e3d2</code></td>
+      </tr>
+    
+      <tr>
+        <td><code>geography_2022:districts</code></td>
+        <td>200</td>
+        <td>geojson</td>
+        <td>unknown
+            </td>
+        <td>46,869,926</td>
+        <td><code class="muted">f361a3c40e75</code></td>
+      </tr>
+    
+      <tr>
+        <td><code>nbi_2022</code></td>
+        <td>200</td>
+        <td>csv</td>
+        <td>unknown
+            </td>
+        <td>15,236</td>
+        <td><code class="muted">92588f1544e7</code></td>
+      </tr>
+    
+      <tr>
+        <td><code>worldbank:BX.KLT.DINV.WD.GD.ZS</code></td>
+        <td>200</td>
+        <td>-</td>
+        <td>unknown
+            </td>
+        <td>8,951</td>
+        <td><code class="muted">086076d2c2aa</code></td>
+      </tr>
+    
+      <tr>
+        <td><code>worldbank:FP.CPI.TOTL.ZG</code></td>
+        <td>200</td>
+        <td>-</td>
+        <td>unknown
+            </td>
+        <td>8,295</td>
+        <td><code class="muted">b43f42e931dc</code></td>
+      </tr>
+    
+      <tr>
+        <td><code>worldbank:GC.DOD.TOTL.GD.ZS</code></td>
+        <td>200</td>
+        <td>-</td>
+        <td>unknown
+            </td>
+        <td>8,120</td>
+        <td><code class="muted">bc26fd88c846</code></td>
+      </tr>
+    
+      <tr>
+        <td><code>worldbank:GC.TAX.TOTL.GD.ZS</code></td>
+        <td>200</td>
+        <td>-</td>
+        <td>unknown
+            </td>
+        <td>7,675</td>
+        <td><code class="muted">0c1b49d2cf8a</code></td>
+      </tr>
+    
+      <tr>
+        <td><code>worldbank:NE.EXP.GNFS.ZS</code></td>
+        <td>200</td>
+        <td>-</td>
+        <td>unknown
+            </td>
+        <td>8,401</td>
+        <td><code class="muted">45b67cab6f3f</code></td>
+      </tr>
+    
+      <tr>
+        <td><code>worldbank:NE.TRD.GNFS.ZS</code></td>
+        <td>200</td>
+        <td>-</td>
+        <td>unknown
+            </td>
+        <td>7,542</td>
+        <td><code class="muted">19013e29f0b0</code></td>
+      </tr>
+    
+      <tr>
+        <td><code>worldbank:NV.AGR.TOTL.ZS</code></td>
+        <td>200</td>
+        <td>-</td>
+        <td>unknown
+            </td>
+        <td>9,050</td>
+        <td><code class="muted">1d088a845e6d</code></td>
+      </tr>
+    
+      <tr>
+        <td><code>worldbank:NY.GDP.MKTP.KD.ZG</code></td>
+        <td>200</td>
+        <td>-</td>
+        <td>unknown
+            </td>
+        <td>7,850</td>
+        <td><code class="muted">9928c9eb0d02</code></td>
+      </tr>
+    
+      <tr>
+        <td><code>worldbank:NY.GDP.PCAP.KD</code></td>
+        <td>200</td>
+        <td>-</td>
+        <td>unknown
+            </td>
+        <td>8,185</td>
+        <td><code class="muted">b6acb29f16fa</code></td>
+      </tr>
+    
+      <tr>
+        <td><code>worldbank:SI.POV.GINI</code></td>
+        <td>200</td>
+        <td>-</td>
+        <td>unknown
+            </td>
+        <td>6,780</td>
+        <td><code class="muted">a4bfcfd90278</code></td>
+      </tr>
+    
+      <tr>
+        <td><code>worldbank:SL.TLF.CACT.ZS</code></td>
+        <td>200</td>
+        <td>-</td>
+        <td>unknown
+            </td>
+        <td>9,954</td>
+        <td><code class="muted">2c81d1a3500c</code></td>
+      </tr>
+    
+      <tr>
+        <td><code>worldbank:SL.UEM.TOTL.ZS</code></td>
+        <td>200</td>
+        <td>-</td>
+        <td>unknown
+            </td>
+        <td>8,971</td>
+        <td><code class="muted">204abee2c1d3</code></td>
+      </tr>
+    
+      <tr>
+        <td><code>worldbank:SP.POP.TOTL</code></td>
+        <td>200</td>
+        <td>-</td>
+        <td>unknown
+            </td>
+        <td>7,148</td>
+        <td><code class="muted">4bc99cbecd8f</code></td>
+      </tr>
+    
+    </tbody>
+  </table>
+  </div>
+
+  <footer>
+    Generated by paraguay-open-data-pipeline. Every figure on this page is
+    computed from the warehouse built by this run; nothing is hard-coded.
+  </footer>
+</div>
+</body>
+</html>

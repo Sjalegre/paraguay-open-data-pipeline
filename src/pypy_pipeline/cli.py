@@ -13,7 +13,7 @@ from datetime import date
 
 import duckdb
 
-from .config import EXPORT_DIR, REPORT_DIR, WAREHOUSE_PATH, ensure_dirs
+from .config import DOCS_DIR, EXPORT_DIR, REPORT_DIR, WAREHOUSE_PATH, ensure_dirs
 from .quality import report as quality_report
 from .quality.suite import build_suite, run_suite, summarise
 from .warehouse.build import build, record_checks
@@ -75,6 +75,15 @@ def cmd_build(args: argparse.Namespace) -> int:
         unmatched=result.unmatched,
     )
     print(f"\nreport: {path}")
+    if args.publish_docs:
+        # `data/` is git-ignored, so the generated report is invisible to
+        # anyone browsing the repository. Copying it to `docs/` gives GitHub
+        # Pages something to serve and the README a link that works without
+        # cloning and running anything.
+        published = DOCS_DIR / "index.html"
+        published.parent.mkdir(parents=True, exist_ok=True)
+        published.write_text(path.read_text(encoding="utf-8"), encoding="utf-8")
+        print(f"published: {published}")
     conn.close()
 
     blocking = summarise(results)["blocking"]
@@ -136,6 +145,10 @@ def main(argv: list[str] | None = None) -> int:
     build_parser.add_argument(
         "--skip-catalogue-audit", action="store_true",
         help="skip the full walk of the national catalogue (about 5 requests)",
+    )
+    build_parser.add_argument(
+        "--publish-docs", action="store_true",
+        help="also write the report to docs/index.html for GitHub Pages",
     )
     build_parser.set_defaults(func=cmd_build)
 

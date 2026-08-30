@@ -108,6 +108,7 @@ suite, and writes `data/reports/quality-report.html`. It takes about two minutes
 most of it downloading a 46 MB GeoJSON for five attribute fields.
 
 ```bash
+python -m pypy_pipeline build --publish-docs  # also write docs/index.html for GitHub Pages
 python -m pypy_pipeline build --reuse-cache   # re-read data/raw, skip the network
 python -m pypy_pipeline check                 # re-run checks on the existing warehouse
 python -m pypy_pipeline export                # Parquet + CSV for Power BI
@@ -164,7 +165,8 @@ measures, and the three-page layout.
 
 There is deliberately no `.pbix` in the repository: it is an opaque binary that
 cannot be generated from Python or reviewed in a diff. The HTML quality report
-is the artefact that renders without installing anything.
+is the artefact that renders without installing anything -- `--publish-docs`
+writes it to `docs/index.html`, which GitHub Pages serves directly.
 
 ## Limitations
 
@@ -206,6 +208,7 @@ rather than something to hide.
 
 ```
 config/sources.yml         declarative source registry; no URLs in code
+docs/index.html            the generated quality report, served by GitHub Pages
 src/pypy_pipeline/
   fetch.py                 HTTP with per-retrieval provenance
   text.py                  name folding and encoding-damage detection

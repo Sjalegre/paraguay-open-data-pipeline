@@ -16,6 +16,12 @@ REPORT_DIR = DATA_DIR / "reports"
 EXPORT_DIR = DATA_DIR / "exports"
 WAREHOUSE_PATH = DATA_DIR / "warehouse.duckdb"
 
+# Everything under `data/` is a build artefact and is git-ignored. `docs/` is
+# the one exception: GitHub Pages serves from it, so a copy of the report is
+# committed there deliberately, to give the repository a link a reader can
+# open without installing anything.
+DOCS_DIR = ROOT / "docs"
+
 SOURCES_PATH = CONFIG_DIR / "sources.yml"
 
 

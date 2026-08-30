@@ -1,6 +1,7 @@
 # Build outputs. Everything under data/ is reproducible with
 # `python -m pypy_pipeline build`, and data/raw holds a 46 MB GeoJSON.
 data/
+!docs/
 
 __pycache__/
 *.py[cod]
