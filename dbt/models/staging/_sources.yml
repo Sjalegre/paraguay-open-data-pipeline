@@ -1,0 +1,17 @@
+version: 2
+
+sources:
+  - name: warehouse
+    description: >
+      Tables written by the Python pipeline (`python -m pypy_pipeline build`).
+      dbt reads them and never writes to them: ingestion owns the raw layer,
+      dbt owns everything derived from it.
+    schema: main
+    tables:
+      - name: dim_geography
+      - name: dim_indicator
+      - name: dim_source
+      - name: dim_run
+      - name: fact_indicator_district
+      - name: fact_indicator_national
+      - name: fact_quality_check

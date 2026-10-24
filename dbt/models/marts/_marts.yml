@@ -1,0 +1,125 @@
+version: 2
+
+# These tests restate, in SQL, constraints the Python suite already enforces in
+# `src/pypy_pipeline/quality/`. That duplication is the point.
+#
+# Two independent implementations of the same rule, written against different
+# representations of the data, are stronger evidence than one. If they ever
+# disagree, one of them is wrong -- and finding out which is a result, not a
+# maintenance cost. A single implementation can only tell you it agrees with
+# itself.
+
+models:
+  - name: fct_district_profile
+    description: >
+      One row per district per year, with census and NBI figures pivoted side
+      by side. The grain is (geo_key, year).
+    columns:
+      - name: geo_key
+        description: Canonical DDdd district key, zero-padded.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_geography')
+                field: geo_key
+      - name: population
+        description: Total population at the 2022 census.
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 1
+                max_value: 2000000
+      - name: nbi_any_pct
+        description: Share of households with at least one unmet basic need.
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 100
+                inclusive: true
+      - name: median_age
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 10
+                max_value: 60
+      - name: households
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 1
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [geo_key, year]
+
+  - name: mart_department_summary
+    description: Department aggregates, with household-weighted NBI rates.
+    columns:
+      - name: department_code
+        data_tests:
+          - not_null
+      - name: districts
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 1
+      - name: nbi_any_pct_weighted
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 100
+                inclusive: true
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [department_code, year]
+
+  - name: mart_deprivation_ranking
+    description: >
+      Districts ranked two ways -- by the number of households affected and by
+      the rate -- so the difference between those rankings is visible.
+    columns:
+      - name: dominant_deprivation
+        description: Which of the four NBI components is highest in this district.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [housing, sanitation, education, subsistence]
+      - name: rank_by_households
+        data_tests:
+          - not_null
+          - unique
+
+  - name: mart_quality_history
+    description: Check results per run and family, for the dashboard's quality page.
+    columns:
+      - name: run_id
+        data_tests:
+          - not_null
+      - name: check_family
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - completeness
+                  - uniqueness
+                  - range
+                  - referential
+                  - freshness
+                  - conformity
+                  - consistency
+                  - internal
+      - name: checks
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 1

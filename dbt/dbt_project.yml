@@ -1,0 +1,22 @@
+name: paraguay_warehouse
+version: "1.0.0"
+config-version: 2
+
+profile: paraguay_warehouse
+
+model-paths: ["models"]
+test-paths: ["tests"]
+macro-paths: ["macros"]
+target-path: "target"
+clean-targets: ["target", "dbt_packages"]
+
+models:
+  paraguay_warehouse:
+    staging:
+      # Views: staging only renames and types, so materialising it would copy
+      # the warehouse for no gain.
+      +materialized: view
+    marts:
+      # Tables: these are what Power BI and the report read, and they are
+      # queried far more often than they are built.
+      +materialized: table

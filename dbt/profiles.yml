@@ -1,0 +1,12 @@
+# Points at the DuckDB file the Python pipeline builds. Run `dbt` with
+# `--profiles-dir .` from the `dbt/` directory so this file is used instead of
+# one in the home directory.
+paraguay_warehouse:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: ../data/warehouse.duckdb
+      threads: 4
+      # The pipeline owns the source tables; dbt writes only its own schemas.
+      schema: main

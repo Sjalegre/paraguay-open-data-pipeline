@@ -147,6 +147,35 @@ defects, all non-blocking, and all of them are the findings listed above.
 report that showed 30 green checks would be hiding the most interesting thing
 this repository has to say.
 
+## The SQL layer
+
+A [dbt project](dbt/) sits over the warehouse: 7 models and **28 tests**, all in
+SQL. The Python pipeline owns ingestion — fetching, key splicing, encoding
+repair — and dbt owns everything derived from it.
+
+```bash
+python -m pypy_pipeline build
+cd dbt && dbt deps --profiles-dir . && dbt build --profiles-dir .
+```
+
+Those 28 tests restate constraints the Python suite already enforces, and the
+duplication is deliberate: two independent implementations written against
+different representations of the data are stronger evidence than one. If they
+disagree, one is wrong, and finding out which is a result rather than a
+maintenance cost.
+
+Two findings came out of the marts:
+
+* **Weighting changes the regional picture.** `mart_department_summary`
+  publishes the household-weighted NBI rate next to the unweighted average of
+  districts. In Ñeembucú those are **34.0%** and **43.3%** — nine points apart,
+  because an unweighted mean gives a district of 900 households the same say as
+  one of 90,000.
+* **Rate and scale disagree about where deprivation is.** Ciudad del Este ranks
+  **1st** of 263 by households affected and **199th** by rate.
+  `mart_deprivation_ranking` publishes both, because reporting either alone
+  points policy somewhere different.
+
 ## What the warehouse answers
 
 Queries in [`sql/analytics.sql`](sql/analytics.sql), all runnable directly:
@@ -225,7 +254,8 @@ src/pypy_pipeline/
   quality/report.py        self-contained HTML report
   warehouse/schema.sql     the star schema
   warehouse/build.py       ingest, load, record
-sql/analytics.sql          the analytical queries
+sql/analytics.sql          standalone analytical queries
+dbt/                       the SQL layer: 7 models, 28 tests, its own README
 tests/                     82 tests, no network required
 docs/source-audit.md       what every source actually looked like
 powerbi/                   model spec, DAX measures, page layout
